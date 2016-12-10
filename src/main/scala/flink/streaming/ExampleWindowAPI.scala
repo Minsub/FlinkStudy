@@ -1,5 +1,6 @@
 package flink.streaming
 
+import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.windowing.assigners.{SlidingEventTimeWindows, TumblingEventTimeWindows}
 import org.apache.flink.streaming.api.windowing.time.Time
@@ -9,6 +10,7 @@ object ExampleWindowAPI {
 
   def main(args: Array[String]): Unit = {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
+    env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime)
     env.setParallelism(1)
 
     val streamWC = env.fromElements(WordCount("H",1), WordCount("A",4), WordCount("H", 5))
@@ -28,30 +30,8 @@ object ExampleWindowAPI {
     // [window] apply: 커스텀 함수
     //keyedStreamWord.timeWindow(Time.seconds(5), Time.seconds(1)).apply(WindowFunction)
 
-    // [window] reduce: reduce 랑 동일
+    // [window] reduce, fold, aggregations : 기존과 동일
     keyedStreamWord.timeWindow(Time.seconds(5), Time.seconds(1)).reduce((x,y) => (x._1, x._2 + y._2))
-
-    // [window] fold: fold랑 동일
-
-    // [window] aggregations
-
-    // union
-
-    // coGroup
-
-    // connect
-
-    // [connectedStream] coMap
-
-    // [connectedStream] coFlatMap
-
-    // split
-
-    // select
-
-    // iterate
-
-    // extract timestamps
 
     env.execute("Example Window APIs")
   }
