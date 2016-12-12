@@ -1,8 +1,6 @@
 package flink.streaming
 
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
-import org.apache.flink.streaming.api.windowing.time.Time
 
 object ExampleAPI {
   case class WordCount(word: String, count: Long)
@@ -40,8 +38,12 @@ object ExampleAPI {
 
     // aggregations (KeyedStream -> DataStream) : sum, max, min, minBy, maxBy
     kstreamTuple.sum(0)
-    kstreamWC.max("count").print
+    kstreamWC.max("count")
     // TODO: keyedStream이 아닌 일반 stream에서 되는지, max와 maxBy 차이점
+
+
+    // project: Select 문과 유사. 일정 컬럼만 필터링
+
 
     env.execute("Example APIs")
   }
