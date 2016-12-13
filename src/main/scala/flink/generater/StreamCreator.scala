@@ -21,11 +21,12 @@ object StreamCreator {
     override def hasNext: Boolean = true
     override def next(): T = {
       idx += 1
-      if (idx >= seq.size) {
-        idx = 0
+      if (idx > seq.size) {
+        idx = 1
+        Thread.sleep(interval * 2)
       }
       Thread.sleep(interval)
-      seq(idx)
+      seq(idx - 1)
     }
   }
 }

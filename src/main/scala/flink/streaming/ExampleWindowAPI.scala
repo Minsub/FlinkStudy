@@ -1,39 +1,103 @@
 package flink.streaming
 
+import flink.generater.StreamCreator
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.api.windowing.assigners.{SlidingEventTimeWindows, TumblingEventTimeWindows}
+import org.apache.flink.streaming.api.scala.function.WindowFunction
+import org.apache.flink.streaming.api.windowing.assigners._
 import org.apache.flink.streaming.api.windowing.time.Time
+import org.apache.flink.streaming.api.windowing.triggers.{Trigger, TriggerResult}
+import org.apache.flink.streaming.api.windowing.triggers.Trigger.TriggerContext
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow
+import org.apache.flink.util.Collector
+
+import scala.collection.mutable.ArrayBuffer
 
 object ExampleWindowAPI {
-  case class WordCount(word: String, count: Long)
+  case class WC(word: String, count: Long)
 
   def main(args: Array[String]): Unit = {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
+    //env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
     env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime)
     env.setParallelism(1)
 
-    val streamWC = env.fromElements(WordCount("H",1), WordCount("A",4), WordCount("H", 5))
 
-    val streamSocket = env.socketTextStream("localhost", 9999)
-    val keyedStreamWord = streamSocket.flatMap(_.split(" ")).map((_, 1)).keyBy(0)
+    val input = env.fromCollection(StreamCreator.source(List.range(1, 10), 100))
 
-    // window: element를 처리하는 범위를 지정
-    //keyedStreamWord.window(TumblingEventTimeWindows.of(Time.seconds(3))).sum(1).print()
-    //keyedStreamWord.timeWindow(Time.seconds(5), Time.seconds(1)).sum(1).print()
-    //TODO: 여기서부터! https://ci.apache.org/projects/flink/flink-docs-release-1.1/apis/streaming/index.html
+    val keyedStream = input.map(_.toString+"-").keyBy(x => "key")
+
+    // tumbling window: n시간만큼의 window size
+    val tumblingWindow = TumblingEventTimeWindows.of(Time.seconds(3))
+    // sliding window: tubple을 중복으러 처리함. x 마다 y 만큼 시간 동안 들어온 데이터를 기준으로 계산
+    val slidingWindow = SlidingEventTimeWindows.of(Time.seconds(6), Time.seconds(3))
+    // session window: 데이터가 들어오지 않는 interval 타임까지의 데이터가 window size
+    val sessionWindow = EventTimeSessionWindows.withGap(Time.milliseconds(200))
+    // global window:
+    val globalWindow = GlobalWindows.create()
 
 
-    // windowAll: non-parallel transformation 으로 하나의 task로 처리
-    //streamWord.map((_,1)).keyBy(0).windowAll(TumblingEventTimeWindows.of(Time.seconds(5)))
+    val windowedStream = keyedStream.window(sessionWindow)
+    //val windowedStream = keyedStream.window(globalWindow)
 
-    // [window] apply: 커스텀 함수
-    //keyedStreamWord.timeWindow(Time.seconds(5), Time.seconds(1)).apply(WindowFunction)
+    // allowedLateness: late data를 처리
+//    windowedStream.allowedLateness(Time.milliseconds(100))
 
-    // [window] reduce, fold, aggregations : 기존과 동일
-    keyedStreamWord.timeWindow(Time.seconds(5), Time.seconds(1)).reduce((x,y) => (x._1, x._2 + y._2))
+    // trigger
+//    windowedStream.trigger(new MyTrigger())
+
+//    val output = windowedStream.reduce((x,y) => x + y)
+    val output =  windowedStream.apply[String](new MyWindowFunction())
+//    val output =  windowedStream.apply[String](mergeText)
+
+
+    //output.print()
+
+
+    // None-keyed Windowing: windowAll
+    val nkWindowStream = input.map(_.toString+"-").windowAll(sessionWindow)
+    nkWindowStream.apply((time: TimeWindow, input: Iterable[String], out: Collector[String]) => {
+      var count = 0L
+      val sb = new StringBuilder
+      for (in <- input) {
+        count += 1
+        sb.append(in)
+      }
+      out.collect(s"Window Count: $count -> ${sb.toString()}")
+    }).print()
 
     env.execute("Example Window APIs")
   }
 
+  val mergeText =
+    (key: String, window: TimeWindow, input: Iterable[String], out: Collector[String]) => {
+    var count = 0L
+    val sb = new StringBuilder()
+    for (in <- input) {
+      count += 1
+      sb.append(in)
+    }
+    out.collect(s"Window Count: $count -> ${sb.toString()}")
+  }
+
+  // Custom Window Function
+  class MyWindowFunction extends WindowFunction[String, String, String, TimeWindow] {
+    override def apply(key: String, window: TimeWindow, input: Iterable[String], out: Collector[String]): Unit = {
+      var count = 0L
+      val sb = new StringBuilder()
+      for (in <- input) {
+        count += 1
+        sb.append(in)
+      }
+      out.collect(s"Window Count: $count -> ${sb.toString()}")
+    }
+  }
+
+  class MyTrigger extends Trigger[String, TimeWindow] {
+    override def onElement(element: String, timestamp: Long, window: TimeWindow, ctx: TriggerContext): TriggerResult = ???
+
+    override def onProcessingTime(time: Long, window: TimeWindow, ctx: TriggerContext): TriggerResult = ???
+
+    override def onEventTime(time: Long, window: TimeWindow, ctx: TriggerContext): TriggerResult = ???
+  }
 }

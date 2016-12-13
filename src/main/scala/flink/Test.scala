@@ -15,6 +15,8 @@ object Test {
 
     val s = List(1,2,3,4)
     print(s.map(_.toString).reduce(_+_))
+
+    print(List.range(1, 10))
   }
 
   def ttt[T](list: Seq[T]): List[T] = {
