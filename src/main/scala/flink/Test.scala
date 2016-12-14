@@ -14,9 +14,9 @@ object Test {
     println(list)
 
     val s = List(1,2,3,4)
-    print(s.map(_.toString).reduce(_+_))
+    println(s.map(_.toString).reduce(_+_))
 
-    print(List.range(1, 10))
+    println(List.range(1, 10) :::  List.range(5,15))
   }
 
   def ttt[T](list: Seq[T]): List[T] = {
