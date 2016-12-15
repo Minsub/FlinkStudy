@@ -4,6 +4,7 @@ import org.apache.flink.api.common.functions.Partitioner
 import org.apache.flink.api.common.operators.Order
 import org.apache.flink.api.java.aggregation.Aggregations
 import org.apache.flink.api.scala._
+import org.apache.flink.configuration.Configuration
 
 
 object ExampleDataSource {
@@ -36,5 +37,13 @@ object ExampleDataSource {
 //
     // generate a number sequence
     val numbers = env.generateSequence(1, 1000);
+
+
+    // recursive
+    val parameters = new Configuration
+    parameters.setBoolean("recursive.file.enumeration", true)
+
+    val recursiveData = env.readTextFile(PATH).withParameters(parameters)
+
   }
 }
