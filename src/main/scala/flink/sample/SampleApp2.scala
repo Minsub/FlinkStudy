@@ -1,25 +1,29 @@
 package flink.sample
 
-import flink.generater.StreamCreator
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.windowing.time.Time
 
-object SampleApp {
+object SampleApp2 {
 
   def main(args: Array[String]): Unit = {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
-    env.setParallelism(1)
 
-    val input = env.fromCollection[Int](StreamCreator.source[Int](List.range(1, 10), 200))
+    val text = env.socketTextStream("localhost", 9999)
 
-    input.map((_, 1))
-      .timeWindowAll(Time.seconds(5), Time.seconds(2))
-      .reduce((x, y) => (x._1 + y._1, x._2 + y._2))
-      .print()
+    val count = text
+        .flatMap(_.split(" "))
+        .map((_, 1))
+        .keyBy(0)
+        .timeWindow(Time.seconds(5), Time.seconds(1))
+        .sum(1)
 
-    env.execute("Flink Run Test1")
+    count.print()
+
+    env.execute("Socket WordCount Sample1")
+
+    //nc -lk 9999
   }
 
 }
