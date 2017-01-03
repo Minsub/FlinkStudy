@@ -1,4 +1,4 @@
-package flink.streaming.connector
+package flink.streaming.connector.kafka
 
 import java.util.Properties
 

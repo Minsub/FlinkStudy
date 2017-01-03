@@ -1,6 +1,4 @@
-package flink.streaming.connector
-
-import java.util.Properties
+package flink.streaming.connector.kafka
 
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.TimeCharacteristic
