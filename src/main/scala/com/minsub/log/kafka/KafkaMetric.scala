@@ -17,6 +17,7 @@ import scala.util.parsing.json.JSON
 object KafkaMetric {
 
   def main(args: Array[String]): Unit = {
+    /*
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.enableCheckpointing(1000) // required for commit offset by consumer group
     env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
@@ -40,5 +41,6 @@ object KafkaMetric {
     }).print()
 
     env.execute("metric-kafka")
+    */
   }
 }

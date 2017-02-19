@@ -12,6 +12,7 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema
 object ExampleKafkaProducer {
 
   def main(args: Array[String]): Unit = {
+    /*
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
     env.setParallelism(2)
@@ -23,5 +24,6 @@ object ExampleKafkaProducer {
     stream.addSink(new FlinkKafkaProducer09[String]("localhost:9092", "test", new SimpleStringSchema()))
 
     env.execute("Flink Kafka Producer")
+    */
   }
 }

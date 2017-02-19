@@ -7,14 +7,15 @@ import org.apache.flink.api.common.functions.RuntimeContext
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.streaming.connectors.elasticsearch2.{ElasticsearchSink, ElasticsearchSinkFunction, RequestIndexer}
-import org.elasticsearch.action.index.IndexRequest
-import org.elasticsearch.client.Requests
+//import org.apache.flink.streaming.connectors.elasticsearch2.{ElasticsearchSink, ElasticsearchSinkFunction, RequestIndexer}
+//import org.elasticsearch.action.index.IndexRequest
+//import org.elasticsearch.client.Requests
 
 
 object ExampleElasticsearchSink {
 
   def main(args: Array[String]): Unit = {
+    /*
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
     env.setParallelism(2)
@@ -44,5 +45,6 @@ object ExampleElasticsearchSink {
 
 
     env.execute("Flink Elasticsearch sink")
+    */
   }
 }

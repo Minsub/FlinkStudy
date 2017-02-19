@@ -1,8 +1,8 @@
 package flink.table
 
 import org.apache.flink.api.scala._
-import org.apache.flink.api.scala.table._
-import org.apache.flink.api.table.TableEnvironment
+import org.apache.flink.table.api.TableEnvironment
+import org.apache.flink.table.api.scala._
 
 
 object ExampleOperatorAPI {

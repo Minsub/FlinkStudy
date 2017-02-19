@@ -99,5 +99,7 @@ object ExampleWindowAPI {
     override def onProcessingTime(time: Long, window: TimeWindow, ctx: TriggerContext): TriggerResult = ???
 
     override def onEventTime(time: Long, window: TimeWindow, ctx: TriggerContext): TriggerResult = ???
+
+    override def clear(window: TimeWindow, ctx: TriggerContext): Unit = ???
   }
 }

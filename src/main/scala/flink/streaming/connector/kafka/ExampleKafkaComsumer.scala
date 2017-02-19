@@ -15,6 +15,7 @@ import org.apache.kafka.common.serialization.StringDeserializer
 object ExampleKafkaComsumer {
 
   def main(args: Array[String]): Unit = {
+    /*
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.enableCheckpointing(1000) // required for commit offset by consumer group
     env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
@@ -35,5 +36,6 @@ object ExampleKafkaComsumer {
     stream.print()
 
     env.execute("Flink Kafka Consumer")
+    */
   }
 }

@@ -3,7 +3,7 @@ package flink.streaming
 import java.util
 
 import org.apache.flink.api.common.io.FileInputFormat
-import org.apache.flink.streaming.api.functions.source.{FilePathFilter, FileProcessingMode, SourceFunction}
+import org.apache.flink.streaming.api.functions.source.{FileProcessingMode, SourceFunction}
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.util.SplittableIterator
 
