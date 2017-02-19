@@ -17,7 +17,7 @@ object ExampleStreamSQL {
     tableEnv.registerDataStream("numbers", input, 'num)
 
     // SQL
-    val streamSql = tableEnv.sql("SELECT STREAM num * 10 FROM numbers ").toDataStream[Int]
+    val streamSql = tableEnv.sql("SELECT num * 10 FROM numbers ").toDataStream[Int]
 
     streamSql.print()
 

@@ -1,4 +1,4 @@
-package flink.streaming.connector.kafka
+package flink.streaming.connector.kafka.v09
 
 import java.util.Properties
 
@@ -9,11 +9,12 @@ import org.apache.flink.streaming.connectors.kafka._
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema
 import org.apache.kafka.common.serialization.StringDeserializer
 
-
-object ExampleKafka {
+/**
+  * Created by hmm1115222 on 2016-12-14.
+  */
+object ExampleKafkaComsumer {
 
   def main(args: Array[String]): Unit = {
-    /*
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.enableCheckpointing(1000) // required for commit offset by consumer group
     env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime)
@@ -21,18 +22,18 @@ object ExampleKafka {
 
     val properties = new Properties();
     properties.setProperty("bootstrap.servers", "localhost:9092");
-    properties.setProperty("group.id", "consumer-tutorial-group");
+
+    // only required for Kafka 0.8
+//    properties.setProperty("zookeeper.connect", "localhost:2181");
+    properties.setProperty("group.id", "consumer-tutorial-group2");
     properties.put("key.deserializer", classOf[StringDeserializer].getName)
     properties.put("value.deserializer", classOf[StringDeserializer].getName)
 
     val consumer = new FlinkKafkaConsumer09[String]("consumer-tutorial", new SimpleStringSchema(), properties)
-    val input = env.addSource(consumer)
+    val stream = env.addSource(consumer)
 
-    input
-      .map(_ + " by Flink")
-      .addSink(new FlinkKafkaProducer09[String]("localhost:9092", "consumer-tutorial-flink", new SimpleStringSchema()))
+    stream.print()
 
     env.execute("Flink Kafka Consumer")
-    */
   }
 }
