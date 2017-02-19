@@ -17,5 +17,6 @@ object ExampleSQL {
     // SQL
     val dataSum = tableEnv.sql("SELECT SUM(c) FROM tuples WHERE a='A' ").toDataSet[Int]
 
+    dataSum.print()
   }
 }
