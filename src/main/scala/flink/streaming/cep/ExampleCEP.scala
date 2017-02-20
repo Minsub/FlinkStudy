@@ -1,6 +1,6 @@
 package flink.streaming.cep
 
-import flink.generater.StreamCreator
+import flink.streaming.basic.datasource.StreamCreator
 import org.apache.flink.api.scala._
 import org.apache.flink.cep.scala.CEP
 import org.apache.flink.cep.scala.pattern.Pattern

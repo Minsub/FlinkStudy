@@ -1,6 +1,6 @@
 package flink.table
 
-import flink.generater.StreamCreator
+import flink.streaming.basic.datasource.StreamCreator
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
 import org.apache.flink.api.scala._
 import org.apache.flink.table.api.TableEnvironment

@@ -1,6 +1,6 @@
 package flink.streaming
 
-import flink.generater.StreamCreator
+import flink.streaming.basic.datasource.StreamCreator
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks
 import org.apache.flink.streaming.api.scala._

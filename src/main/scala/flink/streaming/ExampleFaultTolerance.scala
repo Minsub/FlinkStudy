@@ -1,6 +1,6 @@
 package flink.streaming
 
-import flink.generater.StreamCreator
+import flink.streaming.basic.datasource.StreamCreator
 import org.apache.flink.streaming.api.{CheckpointingMode, TimeCharacteristic}
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.windowing.time.Time
