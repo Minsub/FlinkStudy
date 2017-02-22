@@ -29,8 +29,6 @@ object Test {
 
     println(node.get("info").get("addr"))
 
-
-
   }
 
 }
