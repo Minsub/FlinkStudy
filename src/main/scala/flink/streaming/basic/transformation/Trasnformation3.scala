@@ -1,10 +1,10 @@
 package flink.streaming.basic.transformation
 
-import org.apache.flink.streaming.api.scala.extensions._
 import flink.streaming.basic.datasource.StreamCreator
 import org.apache.flink.streaming.api.TimeCharacteristic
+import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.api.scala.function.WindowFunction
+import org.apache.flink.streaming.api.watermark.Watermark
 import org.apache.flink.streaming.api.windowing.assigners._
 import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
@@ -75,11 +75,18 @@ object Trasnformation3 {
       }
     })
 
-    splitStream.select("all").print()
+    /* SplitStream -> DataStream */
+    // #6. select
+    splitStream.select("even")
+      //.print()
 
-
-
-    //val keyStream = stream.keyBy(v => if (v.toInt % 2 == 0 ) "even" else "odd")
+    // #7. iterate: operator안에서 input으로 다시 element를 보냄. (stream, stream) 구조에서 왼쪽이 re-input, 오른쪽이 실제 output
+    env.generateSequence(0, 1)
+      .iterate[String](iter => {
+        val streamBody = iter.map(_+1)
+        (streamBody, streamBody.map(_.toString + "-Out"))
+      })
+      .print()
 
     env.execute("Example transformation 3")
   }

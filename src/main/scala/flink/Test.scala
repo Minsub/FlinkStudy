@@ -1,33 +1,23 @@
 package flink
 
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.databind.{DeserializationFeature, JsonNode, ObjectMapper}
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+
+import scala.io.Source
 
 
 object Test {
 
-  val person1 = """{
-  "name": "Joe Doe",
-  "age": 45,
-  "kids": ["Frank", "Marta", "Joan"],
-  "info": {
-    "addr":"seoul",
-    "phone":"010-1234-1234"
-  }
-}"""
+  val inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS")
 
   def main(args: Array[String]): Unit = {
-    val mapper = new ObjectMapper() with ScalaObjectMapper
-    mapper.registerModule(DefaultScalaModule)
-    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    val msg = "2017-03-02 14:04:46 870"
 
-    val node = mapper.readValue[JsonNode](person1)
+    val date = inputFormat.parse(msg)
 
-    println(node)
-
-    println(node.get("info").get("addr"))
+    println(msg)
+    println(date)
+    println(date.getTime)
 
   }
 
