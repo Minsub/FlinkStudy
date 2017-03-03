@@ -12,6 +12,7 @@ import org.apache.flink.streaming.api.windowing.windows.TimeWindow
 import org.apache.flink.util.Collector
 
 import scala.io.Source
+import scala.math._
 
 object GeneratingTimeStampAndWartermarks {
   val PATH = "src/main/resources/myEvent.csv"
@@ -23,7 +24,7 @@ object GeneratingTimeStampAndWartermarks {
 
     val input = env.readFile(new MyFileInputFormat(PATH), PATH)
     input
-      .assignTimestampsAndWatermarks(new MyAssignerWithPeriodicWatermarks)
+      .assignTimestampsAndWatermarks(new TimeLagPeriodicWatermarks)
       .windowAll(TumblingEventTimeWindows.of(Time.seconds(3)))
       .apply((time: TimeWindow, input: Iterable[MyEvent], out: Collector[String]) => {
         var count = 0L
@@ -41,6 +42,7 @@ object GeneratingTimeStampAndWartermarks {
 
   case class MyEvent(index: Long, msg:String, timestamp: String, timestamp_ms: Long)
 
+  // formatter for CSV file to MyEvent format
   class MyFileInputFormat(path: String) extends FileInputFormat[MyEvent] {
     val inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss SSS")
 
@@ -57,9 +59,23 @@ object GeneratingTimeStampAndWartermarks {
     override def reachedEnd(): Boolean = count >= maxCount
   }
 
-  class MyAssignerWithPeriodicWatermarks extends AssignerWithPeriodicWatermarks[MyEvent] {
+  // Watermarks for In Order
+  class TimeLagPeriodicWatermarks extends AssignerWithPeriodicWatermarks[MyEvent] {
     val maxTimeLag  = 3500L; // 3.5 seconds
     override def extractTimestamp(element: MyEvent, previousElementTimestamp: Long): Long = element.timestamp_ms
     override def getCurrentWatermark: Watermark = new Watermark(System.currentTimeMillis() - maxTimeLag )
+  }
+
+  // Watermarks for Out of Order
+  class OutOfOrderPeriodicWatermarks extends AssignerWithPeriodicWatermarks[MyEvent] {
+    val maxOutOfOrderness = 3500L; // 3.5 seconds
+    var currentMaxTimestamp: Long = 0
+
+    override def extractTimestamp(element: MyEvent, previousElementTimestamp: Long): Long = {
+      val timestamp = element.timestamp_ms
+      currentMaxTimestamp = max(timestamp, currentMaxTimestamp)
+      timestamp;
+    }
+    override def getCurrentWatermark(): Watermark = new Watermark(currentMaxTimestamp - maxOutOfOrderness)
   }
 }
