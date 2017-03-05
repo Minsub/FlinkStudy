@@ -1,0 +1,5 @@
+{"index":1, "name":"ms ji", "age": 33, "lecture":["DB","Scala","Flink"]}
+{"index":2, "name":"ms ji2", "age": 23, "lecture":["DB","Scala","Flink"]}
+failed message
+{"index":3, "name":"ms ji3", "age": 53, "lecture":["DB","Scala","Flink"]}
+{"index":4, "name":"ms ji4", "age": 32, "lecture":["DB","Scala","Flink"]}

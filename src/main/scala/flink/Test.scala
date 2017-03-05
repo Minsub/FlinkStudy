@@ -4,7 +4,8 @@ import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 
 import scala.io.Source
-
+import java.nio.charset.StandardCharsets
+import scala.io.Source
 
 object Test {
 
@@ -18,6 +19,14 @@ object Test {
     println(msg)
     println(date)
     println(date.getTime)
+
+    val text = "#\uad11\ud654\ubb38 #\uc2e0\uc0ac\ub3d9 #\uac15\ub0a8 \ucf54\ub4dc 2580 \uccab\ucda910% \ub9e4\ucda9 5%"
+    println(text)
+
+    val bytes = text.getBytes(StandardCharsets.UTF_8)
+    val encoded = Source.fromBytes(bytes, "UTF-8").mkString
+
+    println(encoded)
 
   }
 
