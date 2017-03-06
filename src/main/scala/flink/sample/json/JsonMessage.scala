@@ -1,5 +1,6 @@
 package flink.sample.json
 
+import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
@@ -25,11 +26,16 @@ object JsonMessage {
 
     stream
       .map(s => {
-        val mapper = new ObjectMapper() with ScalaObjectMapper with Serializable
-        mapper.registerModule(DefaultScalaModule)
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        mapper.readValue[Map[String,Any]](s)
+        try {
+          val mapper = new ObjectMapper() with ScalaObjectMapper with Serializable
+          mapper.registerModule(DefaultScalaModule)
+          mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+          mapper.readValue[Map[String,Any]](s)
+        } catch {
+          case e: JsonParseException => Map()
+        }
       })
+      .filter(_.nonEmpty)
       .print()
 
     env.execute("Example json stream 1")

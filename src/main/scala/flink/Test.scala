@@ -5,6 +5,12 @@ import java.time.format.DateTimeFormatter
 
 import scala.io.Source
 import java.nio.charset.StandardCharsets
+
+import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.databind.{DeserializationFeature, ObjectMapper}
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fasterxml.jackson.module.scala.experimental.ScalaObjectMapper
+
 import scala.io.Source
 
 object Test {
@@ -27,6 +33,24 @@ object Test {
     val encoded = Source.fromBytes(bytes, "UTF-8").mkString
 
     println(encoded)
+
+
+    val mapper = new ObjectMapper() with ScalaObjectMapper with Serializable
+    mapper.registerModule(DefaultScalaModule)
+    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+
+    val lines = Source.fromFile("src/main/resources/sample.json").getLines().toList
+
+    for (line <- lines) {
+      try {
+        val json = mapper.readValue[Map[String,Any]](line)
+        println(json)
+      } catch {
+        case e: JsonParseException => Unit
+      }
+    }
+
+
 
   }
 
