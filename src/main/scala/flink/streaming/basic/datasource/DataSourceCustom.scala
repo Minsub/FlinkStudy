@@ -27,7 +27,7 @@ object DataSourceCustom {
     override def run(ctx: SourceContext[Int]): Unit = {
       while(true) {
         for (i <- list) {
-          Thread.sleep(1000)
+          Thread.sleep(100)
           ctx.collect(i)
         }
       }

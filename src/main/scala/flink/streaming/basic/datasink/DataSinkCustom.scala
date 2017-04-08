@@ -3,6 +3,7 @@ package flink.streaming.basic.datasink
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction
 import org.apache.flink.streaming.api.scala._
+import org.apache.flink.streaming.util.serialization.SimpleStringSchema
 
 object DataSinkCustom {
 
@@ -16,6 +17,9 @@ object DataSinkCustom {
     input.addSink(new DataSinkCustom())
 
     env.execute("Example dataSink custom")
+
+    val stream = env.fromCollection(List("A","B","C"))
+    stream.writeToSocket("localhost", 9999, new SimpleStringSchema())
   }
 
   class DataSinkCustom extends RichSinkFunction[Int] {

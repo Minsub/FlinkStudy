@@ -1,13 +1,10 @@
 package flink.streaming.basic.datasource
 
-import java.io.{File, FileInputStream}
-
-import org.apache.flink.api.common.io.FileInputFormat
 import org.apache.flink.api.java.io.TextInputFormat
-import org.apache.flink.streaming.api.TimeCharacteristic
-import org.apache.flink.streaming.api.scala._
 import org.apache.flink.core.fs.Path
+import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.source.FileProcessingMode
+import org.apache.flink.streaming.api.scala._
 
 object DataSourceFromFile {
   val PATH = "src/main/resources/log.txt"
