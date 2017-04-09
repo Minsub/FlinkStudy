@@ -11,23 +11,16 @@ object WindowSession {
   def main(args: Array[String]): Unit = {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime)
-    env.setParallelism(4)
+    env.setParallelism(1)
 
-    val stream = env.fromCollection(StreamCreator.source(List.range(1, 4), 500)).map(_.toString)
+    val stream = env.fromCollection(StreamCreator.source(List.range(1, 10), 300)).map(_.toString)
 
     // Session: elements의 입력 gap의 시간 설정으로 windows 단위를 나눔
     stream
-      .windowAll(EventTimeSessionWindows.withGap(Time.milliseconds(800)))
+      .windowAll(EventTimeSessionWindows.withGap(Time.milliseconds(500)))
       .apply(Operators.appendAllFunction)
       .print()
-      .setParallelism(1)
-
-
-
 
     env.execute("Example window session 1")
   }
-
-
-
 }

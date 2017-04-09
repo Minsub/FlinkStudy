@@ -4,7 +4,6 @@ import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.Date
 
-
 object StreamCreator {
 
   def source[T](seq: Seq[T], interval: Long): Iterator[T] = {

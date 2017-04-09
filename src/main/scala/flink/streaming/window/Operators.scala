@@ -1,12 +1,12 @@
 package flink.streaming.window
 
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
 import org.apache.flink.streaming.api.scala.function.{AllWindowFunction, WindowFunction}
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow
 import org.apache.flink.util.Collector
 
-/**
-  * Created by hmm1115222 on 2017-03-02.
-  */
 object Operators {
 
   // String 데이터를 append 시키는 window apply 함수
@@ -17,11 +17,12 @@ object Operators {
       count += 1
       sb.append(in)
     }
-    out.collect(s"Key: $key, Window Count: $count -> ${sb.toString()}")
+    val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss SSS"))
+    out.collect(s"Key: $key, time: $time, Count: $count -> ${sb.toString()}")
   }
 
   val appendAllFunction = (window: TimeWindow, input: Iterable[String], out: Collector[String]) => {
-    appendFunction("[empty]", window, input, out)
+    appendFunction("", window, input, out)
   }
 
   class AppendAllWindowFunction extends AllWindowFunction[String, String, TimeWindow] {
