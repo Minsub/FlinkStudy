@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-import flink.streaming.basic.datasource.StreamCreator
 import org.apache.flink.api.common.io.FileInputFormat
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.AssignerWithPeriodicWatermarks
@@ -18,20 +17,17 @@ import org.apache.flink.util.Collector
 import scala.io.Source
 import scala.math._
 
-object GeneratingTimeStampAndWartermarks {
-  val PATH = "src/main/resources/myEvent.csv"
+object OutOfOrderTimeStamp {
+  val PATH = "src/main/resources/OutOfOrder.csv"
 
   def main(args: Array[String]): Unit = {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.IngestionTime)
     env.setParallelism(1)
 
-    //val input = env.readFile(new MyFileInputFormat(PATH), PATH)
-    val stream = env.fromCollection(StreamCreator.sourceWithTimestamp(List.range(1, 10), 500))
-    val input = stream.map(t => MyEvent(t._1.toLong,"msg-" +t._1, t._2, t._3))
-
+    val input = env.readFile(new MyFileInputFormat(PATH), PATH)
     input
-      .assignTimestampsAndWatermarks(new TimeLagPeriodicWatermarks)
+      .assignTimestampsAndWatermarks(new OutOfOrderPeriodicWatermarks)
       .windowAll(TumblingEventTimeWindows.of(Time.seconds(3)))
       .apply((time: TimeWindow, input: Iterable[MyEvent], out: Collector[String]) => {
         val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss SSS"))
